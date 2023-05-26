@@ -235,3 +235,119 @@ TEST_CASE("Rearrange shelf with quallified, but busy, employee", "Warehouse::rea
     REQUIRE(warehouse.shelves[0].pallets[2].getItemCount() == 30);
     REQUIRE(warehouse.shelves[0].pallets[3].getItemCount() == 10);
 }
+
+TEST_CASE("Pick items when there enough items", "Warehouse::PickItems"){
+    Warehouse warehouse = Warehouse();
+    Shelf shelf1 = Shelf();
+    shelf1.pallets = {
+        Pallet("Books", 100, 20),
+        Pallet("Milk", 50, 10),
+        Pallet("Cheese", 20, 5),
+        Pallet("Candy", 200, 150)
+    };
+
+    warehouse.addShelf(shelf1)
+    
+    //checkt de pallets
+    REQUIRE(warehouse.shelves[0].pallets[0].getItemCount() == 20);
+    REQUIRE(warehouse.shelves[0].pallets[1].getItemCount() == 10);
+    REQUIRE(warehouse.shelves[0].pallets[2].getItemCount() == 5);
+    REQUIRE(warehouse.shelves[0].pallets[3].getItemCount() == 150);
+
+    //pick 100 candy from the shelve
+    bool succes = warehouse.pickItems("Candy", 100);
+    REQUIRE(succes);
+    
+    //checkt if there is now 50 candys on the shelve
+    REQUIRE(warehouse.shelves[0].pallets[0].getItemCount() == 20);
+    REQUIRE(warehouse.shelves[0].pallets[1].getItemCount() == 10);
+    REQUIRE(warehouse.shelves[0].pallets[2].getItemCount() == 5);
+    REQUIRE(warehouse.shelves[0].pallets[3].getItemCount() == 50);
+}
+
+TEST_CASE("Pick items when there enough items but on multipel shelves", "Warehouse::PickItems"){
+    Warehouse warehouse = Warehouse();
+    Shelf shelf1 = Shelf();
+    shelf1.pallets = {
+        Pallet("Books", 100, 20),
+        Pallet("Milk", 50, 10),
+        Pallet("Cheese", 20, 5),
+        Pallet("Milk", 50, 10)
+    };
+
+    warehouse.addShelf(shelf1)
+    
+    //checkt de pallets
+    REQUIRE(warehouse.shelves[0].pallets[0].getItemCount() == 20);
+    REQUIRE(warehouse.shelves[0].pallets[1].getItemCount() == 10);
+    REQUIRE(warehouse.shelves[0].pallets[2].getItemCount() == 5);
+    REQUIRE(warehouse.shelves[0].pallets[3].getItemCount() == 10);
+
+    //pick 100 candy from the shelve
+    bool succes = warehouse.pickItems("Milk", 15);
+    REQUIRE(succes);
+    
+    //checkt if there is now 50 candys on the shelve
+    REQUIRE(warehouse.shelves[0].pallets[0].getItemCount() == 20);
+    REQUIRE(warehouse.shelves[0].pallets[1].getItemCount() == 0);
+    REQUIRE(warehouse.shelves[0].pallets[2].getItemCount() == 5);
+    REQUIRE(warehouse.shelves[0].pallets[3].getItemCount() == 5);
+}
+
+TEST_CASE("Pick items when there enough items", "Warehouse::PickItems"){
+    Warehouse warehouse = Warehouse();
+    Shelf shelf1 = Shelf();
+    shelf1.pallets = {
+        Pallet("Books", 100, 20),
+        Pallet("Milk", 50, 10),
+        Pallet("Cheese", 20, 5),
+        Pallet("Candy", 200, 150)
+    };
+
+    warehouse.addShelf(shelf1)
+    
+    //checkt de pallets
+    REQUIRE(warehouse.shelves[0].pallets[0].getItemCount() == 20);
+    REQUIRE(warehouse.shelves[0].pallets[1].getItemCount() == 10);
+    REQUIRE(warehouse.shelves[0].pallets[2].getItemCount() == 5);
+    REQUIRE(warehouse.shelves[0].pallets[3].getItemCount() == 150);
+
+    //pick 100 candy from the shelve
+    bool succesful = warehouse.pickItems("Candy", 100);
+    REQUIRE(succesful);
+    
+    //checkt if there is now 50 candys on the shelve
+    REQUIRE(warehouse.shelves[0].pallets[0].getItemCount() == 20);
+    REQUIRE(warehouse.shelves[0].pallets[1].getItemCount() == 10);
+    REQUIRE(warehouse.shelves[0].pallets[2].getItemCount() == 5);
+    REQUIRE(warehouse.shelves[0].pallets[3].getItemCount() == 50);
+}
+
+TEST_CASE("Pick items when there not enough items", "Warehouse::PickItems"){
+    Warehouse warehouse = Warehouse();
+    Shelf shelf1 = Shelf();
+    shelf1.pallets = {
+        Pallet("Books", 100, 20),
+        Pallet("Milk", 50, 5),
+        Pallet("Cheese", 20, 5),
+        Pallet("Milk", 50, 5)
+    };
+
+    warehouse.addShelf(shelf1)
+    
+    //checkt de pallets
+    REQUIRE(warehouse.shelves[0].pallets[0].getItemCount() == 20);
+    REQUIRE(warehouse.shelves[0].pallets[1].getItemCount() == 5);
+    REQUIRE(warehouse.shelves[0].pallets[2].getItemCount() == 5);
+    REQUIRE(warehouse.shelves[0].pallets[3].getItemCount() == 5);
+
+    //pick 100 candy from the shelve
+    bool failed = warehouse.pickItems("Milk", 15);
+    REQUIRE(failed);
+    
+    //checkt if there is now 50 candys on the shelve
+    REQUIRE(warehouse.shelves[0].pallets[0].getItemCount() == 20);
+    REQUIRE(warehouse.shelves[0].pallets[1].getItemCount() == 5);
+    REQUIRE(warehouse.shelves[0].pallets[2].getItemCount() == 5);
+    REQUIRE(warehouse.shelves[0].pallets[3].getItemCount() == 5);
+}
